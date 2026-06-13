@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revizorro-100 | Экосистема РУТ(МИИТ)</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --border: #e2e8f0;
+            --radius: 12px;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .hidden { display: none !important; }
+        
+        /* === LOGIN PAGE === */
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient);
+            padding: 20px;
+        }
+        .login-container {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            max-width: 1000px;
+            width: 100%;
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .login-left {
+            background: var(--gradient);
+            padding: 60px 40px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .login-logo { font-size: 4rem; margin-bottom: 16px; }
+        .login-title { font-size: 2.5rem; font-weight: 800; margin: 0 0 12px; letter-spacing: -1px; }
+        .login-subtitle { font-size: 1.1rem; opacity: 0.9; margin: 0 0 32px; }
+        .feature-list { list-style: none; padding: 0; margin: 0; text-align: left; }
+        .feature-list li { padding: 12px 0; display: flex; align-items: center; gap: 12px; font-size: 1rem; }
+        .feature-icon { width: 32px; height: 32px; background: rgba(255,255,255,0.2); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        
+        .login-right { padding: 50px 40px; }
+        .auth-tabs { display: flex; gap: 12px; margin-bottom: 24px; }
+        .auth-tab { flex: 1; padding: 12px; border: none; background: #f1f5f9; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.3s; }
+        .auth-tab.active { background: var(--gradient); color: white; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3); }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--text); }
+        .form-input { width: 100%; padding: 14px; border: 2px solid var(--border); border-radius: 10px; font-size: 1rem; transition: 0.3s; }
+        .form-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
+        
+        .btn { background: var(--gradient); color: white; border: none; padding: 14px; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 1rem; width: 100%; transition: 0.3s; }
+        .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(102,126,234,0.4); }
+        .btn:disabled { background: #cbd5e1; cursor: not-allowed; transform: none; }
+        .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text); }
+        .btn-outline:hover { background: #f1f5f9; border-color: var(--text-muted); }
+        .btn-danger { background: var(--danger); }
+        .btn-danger:hover { background: #dc2626; }
+        
+        .sso-divider { margin: 24px 0; display: flex; align-items: center; color: var(--text-muted); font-size: 0.9rem; }
+        .sso-divider::before, .sso-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+        .sso-divider span { padding: 0 12px; }
+        
+        .btn-sso { background: white; border: 2px solid var(--border); color: var(--text); display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-sso:hover { background: #f8fafc; border-color: var(--text-muted); transform: none; box-shadow: none; }
+
+        .points-hint { margin-top: 24px; padding: 16px; background: #fef3c7; border-radius: 10px; border-left: 4px solid var(--warning); }
+        .points-hint strong { color: #92400e; display: block; margin-bottom: 4px; }
+        .points-hint p { margin: 0; color: #78350f; font-size: 0.9rem; }
+
+        /* === DASHBOARD === */
+        header { background: var(--card); padding: 16px 24px; border-radius: var(--radius); box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+        .logo { font-weight: 800; font-size: 1.4rem; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; cursor: pointer; }
+        
+        /* ROLE SWITCHER */
+        .role-switcher { display: flex; background: #f1f5f9; padding: 4px; border-radius: 10px; }
+        .role-btn { padding: 8px 16px; border: none; background: transparent; border-radius: 8px; cursor: pointer; font-weight: 600; color: var(--text-muted); transition: 0.3s; white-space: nowrap; }
+        .role-btn:hover { color: var(--text); }
+        .role-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        .user-info { display: flex; align-items: center; gap: 12px; }
+        .avatar { width: 50px; height: 50px; background: var(--gradient); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; flex-shrink: 0; }
+
+        .dashboard { display: grid; grid-template-columns: 240px 1fr; gap: 24px; }
+        @media (max-width: 900px) { .dashboard { grid-template-columns: 1fr; } .role-switcher { display: none; } }
+        
+        .sidebar { background: var(--card); padding: 16px; border-radius: var(--radius); height: fit-content; position: sticky; top: 20px; }
+        .sidebar a { display: block; padding: 10px 12px; margin: 4px 0; text-decoration: none; color: var(--text-muted); border-radius: 8px; transition: 0.2s; font-weight: 500; cursor: pointer; }
+        .sidebar a:hover, .sidebar a.active { background: #eff6ff; color: var(--primary); }
+
+        .main { background: var(--card); padding: 28px; border-radius: var(--radius); box-shadow: 0 2px 8px rgba(0,0,0,0.04); min-height: 600px; }
+        .page { display: none; animation: fadeIn 0.3s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .main h2 { margin: 0 0 8px; font-size: 1.5rem; }
+        .subtitle { color: var(--text-muted); margin: 0 0 24px; }
+
+        /* Schedule Table */
+        .schedule-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+        .schedule-table th, .schedule-table td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
+        .schedule-table th { background: #f8fafc; font-weight: 600; color: var(--text-muted); }
+        .schedule-table tr:hover { background: #fafafa; }
+        .time-badge { background: #e0e7ff; color: #3730a3; padding: 4px 8px; border-radius: 6px; font-size: 0.85rem; font-weight: 500; }
+
+        /* Achievements */
+        .achievements-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+        .achievement-card { background: #f8fafc; border: 2px solid var(--border); border-radius: var(--radius); padding: 20px; text-align: center; transition: 0.3s; }
+        .achievement-card:hover { transform: translateY(-4px); box-shadow: 0 8px 16px rgba(0,0,0,0.08); }
+        .achievement-card.unlocked { border-color: var(--success); background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); }
+        .ach-icon { font-size: 3rem; margin-bottom: 12px; }
+        .ach-title { font-weight: 700; margin: 0 0 6px; font-size: 1rem; }
+        .ach-desc { color: var(--text-muted); font-size: 0.85rem; margin: 0; line-height: 1.3; }
+        .ach-status { margin-top: 12px; font-size: 0.85rem; font-weight: 600; }
+        .ach-status.locked { color: var(--text-muted); }
+        .ach-status.unlocked { color: var(--success); }
+
+        /* Progress */
+        .progress-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
+        .stat-card { background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 20px; border-radius: var(--radius); border: 2px solid #bae6fd; }
+        .stat-label { color: var(--text-muted); font-size: 0.9rem; margin: 0 0 6px; }
+        .stat-value { font-size: 2rem; font-weight: 800; margin: 0; color: var(--primary); }
+        .progress-bar-container { background: #e2e8f0; height: 12px; border-radius: 6px; margin-top: 10px; overflow: hidden; }
+        .progress-bar { height: 100%; border-radius: 6px; transition: width 0.5s ease; }
+        .progress-item { margin-bottom: 20px; background: #f8fafc; padding: 16px; border-radius: 10px; border-left: 4px solid var(--primary); }
+        .progress-header { display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: 600; }
+        .subject-name { color: var(--text); font-size: 1rem; }
+        .subject-points { color: var(--primary); font-weight: 700; }
+
+        /* Settings */
+        .settings-section { max-width: 600px; }
+        .toggle-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .toggle-switch { position: relative; width: 48px; height: 26px; background: #cbd5e1; border-radius: 13px; cursor: pointer; transition: 0.3s; }
+        .toggle-switch.active { background: var(--primary); }
+        .toggle-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; background: white; border-radius: 50%; transition: 0.3s; }
+        .toggle-switch.active::after { left: 24px; }
+
+        /* Flow & Attendance */
+        .flow-container { background: #f8fafc; border: 1px dashed var(--border); padding: 20px; border-radius: var(--radius); }
+        .step { display: flex; align-items: center; gap: 16px; padding: 16px; background: var(--card); border-radius: 10px; margin-bottom: 12px; border-left: 4px solid var(--border); transition: 0.3s; }
+        .step.active { border-left-color: var(--primary); box-shadow: 0 0 0 2px rgba(37,99,235,0.1); }
+        .step.completed { border-left-color: var(--success); opacity: 0.9; }
+        .step-icon { font-size: 1.6rem; min-width: 30px; text-align: center; }
+        .step-content h3 { margin: 0 0 4px; font-size: 1rem; }
+        .step-content p { margin: 0; color: var(--text-muted); font-size: 0.9rem; }
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; margin-left: auto; }
+        .badge-waiting { background: #fef3c7; color: #b45309; }
+        .badge-success { background: #d1fae5; color: #047857; }
+        
+        .qr-section { text-align: center; margin-top: 16px; padding: 24px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: var(--radius); border: 2px dashed var(--primary); }
+        .qr-display { background: white; padding: 20px; border-radius: 12px; display: inline-block; margin: 16px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .qr-code { width: 140px; height: 140px; background: var(--gradient); margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem; border-radius: 8px; }
+        .qr-info { background: #f8fafc; padding: 8px 16px; border-radius: 6px; font-weight: 600; color: var(--text); }
+        .qr-label { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+        
+        .demo-panel { margin-top: 24px; padding: 16px; background: #fffbeb; border: 1px solid #fcd34d; border-radius: var(--radius); display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+        .demo-panel span { font-size: 0.9rem; color: #92400e; font-weight: 500; }
+        .status-log { margin-top: 16px; padding: 12px; background: #1e293b; color: #e2e8f0; border-radius: 8px; font-family: monospace; font-size: 0.85rem; height: 120px; overflow-y: auto; }
+        .log-entry { margin: 4px 0; border-bottom: 1px solid #334155; padding-bottom: 4px; }
+        .log-time { color: #94a3b8; margin-right: 8px; }
+        
+        .success-banner { display: none; margin-top: 20px; padding: 20px; background: #d1fae5; border-radius: var(--radius); text-align: center; border: 1px solid #a7f3d0; }
+        .success-banner h3 { margin: 0 0 8px; color: #047857; }
+        .points-earned { font-size: 2rem; font-weight: 800; color: var(--success); margin: 12px 0; }
+
+        /* === TEACHER VIEWS === */
+        .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+        .stat-card-teacher { background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
+        .stat-value-teacher { font-size: 2rem; font-weight: 800; color: var(--primary); margin: 8px 0; }
+        
+        .group-selector { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+        .group-btn { flex: 1; min-width: 120px; padding: 12px; border: 2px solid var(--border); background: white; border-radius: 10px; cursor: pointer; font-weight: 600; text-align: center; transition: 0.3s; }
+        .group-btn.active { border-color: var(--primary); background: #eff6ff; color: var(--primary); }
+        
+        .student-table { width: 100%; border-collapse: collapse; }
+        .student-table th, .student-table td { padding: 14px; text-align: left; border-bottom: 1px solid var(--border); }
+        .student-table th { background: #f8fafc; color: var(--text-muted); font-weight: 600; }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+        .status-present { background: var(--success); }
+        .status-absent { background: var(--border); }
+        .btn-small { padding: 6px 12px; font-size: 0.85rem; border-radius: 6px; border: none; cursor: pointer; font-weight: 500; transition: 0.2s; }
+        .btn-small:hover { transform: translateY(-1px); }
+        .btn-present { background: var(--success); color: white; }
+        .btn-activity { background: #eff6ff; color: var(--primary); }
+
+        /* === ADMIN VIEWS === */
+        .admin-rank-item { display: flex; align-items: center; padding: 16px; background: #f8fafc; margin-bottom: 12px; border-radius: 10px; border: 1px solid var(--border); }
+        .rank-number { width: 40px; height: 40px; background: var(--gradient); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; margin-right: 16px; flex-shrink: 0; }
+        .rank-bar-container { flex: 1; height: 12px; background: #e2e8f0; border-radius: 6px; margin: 0 16px; overflow: hidden; }
+        .rank-bar { height: 100%; background: var(--gradient); border-radius: 6px; transition: width 0.5s ease; }
+        .rank-percent { font-weight: 700; color: var(--primary); min-width: 50px; text-align: right; }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN PAGE -->
+    <div id="loginPage" class="login-page">
+        <div class="login-container">
+            <div class="login-left">
+                <div class="login-logo">🎯</div>
+                <h1 class="login-title">Ревизорро 100</h1>
+                <p class="login-subtitle">Цифровая экосистема РУТ(МИИТ)</p>
+                <ul class="feature-list">
+                    <li><div class="feature-icon">📱</div><span>Отслеживание баллов в реальном времени</span></li>
+                    <li><div class="feature-icon">🏆</div><span>Достижения и игровая механика</span></li>
+                    <li><div class="feature-icon">📊</div><span>Прозрачная система оценки</span></li>
+                    <li><div class="feature-icon">🎓</div><span>Контроль посещаемости через QR-коды</span></li>
+                </ul>
+            </div>
+            <div class="login-right">
+                <div class="login-card">
+                    <div class="auth-tabs">
+                        <button class="auth-tab active" onclick="switchTab('login')">Вход</button>
+                        <button class="auth-tab" onclick="switchTab('register')">Регистрация</button>
+                    </div>
+                    
+                    <div id="loginForm">
+                        <h2>Вход в систему</h2>
+                        <p style="color:var(--text-muted); margin-bottom: 20px;">Введите данные для доступа к личному кабинету</p>
+                        <div class="form-group">
+                            <label>Логин / Email</label>
+                            <input type="text" class="form-input" placeholder="student@rut-miit.ru">
+                        </div>
+                        <div class="form-group">
+                            <label>Пароль</label>
+                            <input type="password" class="form-input" placeholder="••••••••">
+                        </div>
+                        <button class="btn" onclick="login()">Войти</button>
+                        
+                        <div class="sso-divider"><span>или</span></div>
+                        <button class="btn btn-sso" onclick="login()">
+                            🏛 Войти через корпоративный портал РУТ(МИИТ)
+                        </button>
+                        
+                        <div class="points-hint" style="margin-top: 24px;">
+                            <strong>💡 Как работает система 100 баллов?</strong>
+                            <p>В течение семестра студенты, посещая и работая на парах, получают баллы по той или иной дисциплине, которые непосредственно влияют на результаты сессии. Благодаря этой системе студенты и преподаватели получают прозрачную систему оценки работы.</p>
+                        </div>
+                    </div>
+
+                    <div id="registerForm" class="hidden">
+                        <h2>Регистрация</h2>
+                        <p style="color:var(--text-muted); margin-bottom: 20px;">Создайте аккаунт для доступа к системе</p>
+                        <div class="form-group">
+                            <label>ФИО</label>
+                            <input type="text" class="form-input" placeholder="Иванов Иван Иванович">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" class="form-input" placeholder="student@rut-miit.ru">
+                        </div>
+                        <div class="form-group">
+                            <label>Группа</label>
+                            <input type="text" class="form-input" placeholder="ШМС-211">
+                        </div>
+                        <div class="form-group">
+                            <label>Пароль</label>
+                            <input type="password" class="form-input" placeholder="••••••••">
+                        </div>
+                        <button class="btn" onclick="register()">Зарегистрироваться</button>
+                    </div>
+
+                    <div class="auth-links" style="margin-top: 20px; text-align: center; font-size: 0.9rem; color: var(--text-muted);">
+                        <a href="#" onclick="alert('Восстановление пароля доступно через корпоративный портал РУТ(МИИТ)')" style="color: var(--primary); text-decoration: none; font-weight: 500;">Забыли пароль?</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD PAGE -->
+    <div id="dashboardPage" class="container hidden">
+        <header>
+            <div class="logo" onclick="switchRole('student')">🎯 Ревизорро 100</div>
+            
+            <!-- ROLE SWITCHER -->
+            <div class="role-switcher">
+                <button class="role-btn active" id="btn-student" onclick="switchRole('student')">👤 Студент</button>
+                <button class="role-btn" id="btn-teacher" onclick="switchRole('teacher')">👨‍🏫 Преподаватель</button>
+                <button class="role-btn" id="btn-admin" onclick="switchRole('admin')">👔 Администрация</button>
+            </div>
+
+            <div class="user-info">
+                <div class="avatar" id="userAvatar">СШ</div>
+                <div>
+                    <div style="font-weight:600" id="userName">Степан Шаронов</div>
+                    <div style="font-size:0.85rem; color:var(--text-muted)" id="userRoleLabel">Группа: ШМС-211</div>
+                </div>
+                <button class="btn btn-outline" style="margin-left:12px; padding:6px 12px;" onclick="logout()">Выход</button>
+            </div>
+        </header>
+
+        <div class="dashboard">
+            <!-- SIDEBAR (Only for Student) -->
+            <nav class="sidebar" id="sidebar">
+                <a href="#page-dashboard" class="active" onclick="showSection('page-dashboard')">📊 Обзор</a>
+                <a href="#page-schedule" onclick="showSection('page-schedule')">📅 Расписание</a>
+                <a href="#page-achievements" onclick="showSection('page-achievements')">🏆 Достижения</a>
+                <a href="#page-progress" onclick="showSection('page-progress')">📈 Прогресс</a>
+                <a href="#page-settings" onclick="showSection('page-settings')">⚙️ Настройки</a>
+            </nav>
+
+            <main class="main">
+                
+                <!-- ================= STUDENT CONTENT ================= -->
+                <div id="student-content">
+                    <!-- SECTION: Dashboard / Attendance -->
+                    <section id="page-dashboard" class="page active">
+                        <h2>Отметка посещения пары</h2>
+                        <p class="subtitle">Двухэтапная система: турникет + QR-код</p>
+
+                        <div class="flow-container" id="attendanceFlow">
+                            <div class="step active" id="step1">
+                                <div class="step-icon">🚪</div>
+                                <div class="step-content">
+                                    <h3>1. Фиксация входа в университет</h3>
+                                    <p>СКУД (турникеты) автоматически передают статус "на территории"</p>
+                                </div>
+                                <span class="badge badge-waiting" id="badge1">Ожидание</span>
+                            </div>
+
+                            <div class="step" id="step2">
+                                <div class="step-icon">📱</div>
+                                <div class="step-content">
+                                    <h3>2. Сканирование QR-кода у аудитории</h3>
+                                    <p>Доступно только при статусе "на территории"</p>
+                                </div>
+                                <button class="btn" id="scanBtn" disabled onclick="showQR()">Сканировать QR</button>
+                            </div>
+
+                            <div class="step" id="step3">
+                                <div class="step-icon">✅</div>
+                                <div class="step-content">
+                                    <h3>3. Подтверждение присутствия</h3>
+                                    <p>Баллы начислены, данные отправлены преподавателю</p>
+                                </div>
+                                <span class="badge badge-waiting" id="badge3" style="display:none">Готово</span>
+                            </div>
+                        </div>
+
+                        <!-- QR Section -->
+                        <div id="qrSection" class="qr-section hidden">
+                            <h3 style="margin:0 0 8px; color:var(--primary);">📷 QR-код для отметки</h3>
+                            <p style="margin:0 0 16px; color:var(--text-muted); font-size:0.9rem;">Наведите камеру или нажмите кнопку ниже</p>
+                            
+                            <div class="qr-display">
+                                <div class="qr-code">📲</div>
+                                <div class="qr-info">АУД. 305 • ПАРА 2</div>
+                                <div class="qr-label">Награда: <strong>2 балла</strong></div>
+                            </div>
+                            
+                            <br>
+                            <button class="btn" onclick="confirmQR()" style="width:auto; padding:12px 32px;">
+                                ✓ Подтвердить сканирование
+                            </button>
+                        </div>
+
+                        <div class="success-banner" id="successBanner">
+                            <h3>🎉 Присутствие подтверждено!</h3>
+                            <div class="points-earned">+2 балла</div>
+                            <p style="margin:0; color:#047857">
+                                Посещение: <strong>ауд. 305</strong><br>
+                                Преподаватель получил уведомление. Текущий прогресс: <strong>42/50</strong> баллов до зачёта.
+                            </p>
+                        </div>
+
+                        <div class="demo-panel">
+                            <span>🛠 Демо-режим:</span>
+                            <button class="btn btn-outline" onclick="simulateTurnstile()">Симулировать проход через турникет</button>
+                            <button class="btn btn-outline" onclick="resetFlow()">Сбросить</button>
+                        </div>
+
+                        <div class="status-log" id="consoleLog">
+                            <div class="log-entry"><span class="log-time">[10:00]</span> Система инициализирована. Ожидание входа в университет...</div>
+                        </div>
+                    </section>
+
+                    <!-- SECTION: Schedule -->
+                    <section id="page-schedule" class="page">
+                        <h2>📅 Расписание занятий</h2>
+                        <p class="subtitle">Группа ШМС-211 | Весенний семестр 2026</p>
+                        <table class="schedule-table">
+                            <thead>
+                                <tr><th>Время</th><th>Понедельник</th><th>Вторник</th><th>Среда</th><th>Четверг</th><th>Пятница</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="time-badge">08:30 - 10:00</span></td>
+                                    <td>Математика</td>
+                                    <td>Проектная деятельность</td>
+                                    <td>Распространение радиоволн</td>
+                                    <td>СТиСА</td>
+                                    <td>Физика</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="time-badge">10:10 - 11:40</span></td>
+                                    <td>Физика</td>
+                                    <td>Общая теория связи</td>
+                                    <td>Физика</td>
+                                    <td>Математика</td>
+                                    <td>Распространение радиоволн</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="time-badge">12:20 - 13:50</span></td>
+                                    <td>СТиСА</td>
+                                    <td>Математика</td>
+                                    <td>Проектная деятельность</td>
+                                    <td>Общая теория связи</td>
+                                    <td>Проектная деятельность</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <!-- SECTION: Achievements -->
+                    <section id="page-achievements" class="page">
+                        <h2>🏆 Достижения</h2>
+                        <p class="subtitle">Выполняйте задачи и открывайте награды</p>
+                        <div class="achievements-grid">
+                            <div class="achievement-card unlocked">
+                                <div class="ach-icon">🚪</div>
+                                <h4 class="ach-title">Страж турникета</h4>
+                                <p class="ach-desc">10 проходов через КПП без опозданий</p>
+                                <div class="ach-status unlocked">✅ Получено</div>
+                            </div>
+                            <div class="achievement-card unlocked">
+                                <div class="ach-icon">📅</div>
+                                <h4 class="ach-title">Понедельник не страшный</h4>
+                                <p class="ach-desc">Посетил первую пару в понедельник</p>
+                                <div class="ach-status unlocked">✅ Получено</div>
+                            </div>
+                            <div class="achievement-card unlocked">
+                                <div class="ach-icon">⏰</div>
+                                <h4 class="ach-title">Ранняя пташка</h4>
+                                <p class="ach-desc">Посетил 5 пар, начинающихся в 8:30</p>
+                                <div class="ach-status unlocked">✅ Получено</div>
+                            </div>
+                            <div class="achievement-card">
+                                <div class="ach-icon">📱</div>
+                                <h4 class="ach-title">QR-мастер</h4>
+                                <p class="ach-desc">20 сканирований QR-кодов</p>
+                                <div class="ach-status locked">🔒 Прогресс: 14/20</div>
+                            </div>
+                            <div class="achievement-card">
+                                <div class="ach-icon">🎯</div>
+                                <h4 class="ach-title">Активист</h4>
+                                <p class="ach-desc">Ответил на 10 вопросов преподавателя</p>
+                                <div class="ach-status locked">🔒 Прогресс: 3/10</div>
+                            </div>
+                            <div class="achievement-card">
+                                <div class="ach-icon">🔥</div>
+                                <h4 class="ach-title">Без пропусков</h4>
+                                <p class="ach-desc">Посетил 30 пар подряд</p>
+                                <div class="ach-status locked">🔒 Серия: 18/30</div>
+                            </div>
+                            <div class="achievement-card">
+                                <div class="ach-icon">📚</div>
+                                <h4 class="ach-title">Знаток математики</h4>
+                                <p class="ach-desc">Набрал 80+ баллов по математике</p>
+                                <div class="ach-status locked">🔒 Требуется 80 баллов</div>
+                            </div>
+                            <div class="achievement-card">
+                                <div class="ach-icon">🏅</div>
+                                <h4 class="ach-title">Отличник семестра</h4>
+                                <p class="ach-desc">Набрал 90+ баллов по всем предметам</p>
+                                <div class="ach-status locked">🔒 Требуется 90+ баллов</div>
+                            </div>
+                            <div class="achievement-card">
+                                <div class="ach-icon">💡</div>
+                                <h4 class="ach-title">Генератор идей</h4>
+                                <p class="ach-desc">Предложил 5 идей на проектной деятельности</p>
+                                <div class="ach-status locked">🔒 Прогресс: 2/5</div>
+                            </div>
+                            <div class="achievement-card">
+                                <div class="ach-icon">⚛️</div>
+                                <h4 class="ach-title">Звезда физики</h4>
+                                <p class="ach-desc">Решил 15 задач на отлично</p>
+                                <div class="ach-status locked">🔒 Прогресс: 8/15</div>
+                            </div>
+                            <div class="achievement-card">
+                                <div class="ach-icon">📡</div>
+                                <h4 class="ach-title">Специалист по связи</h4>
+                                <p class="ach-desc">Получил автомат по общей теории связи</p>
+                                <div class="ach-status locked">🔒 Требуется 50 баллов</div>
+                            </div>
+                            <div class="achievement-card">
+                                <div class="ach-icon">🏆</div>
+                                <h4 class="ach-title">Легенда университета</h4>
+                                <p class="ach-desc">Получил все достижения</p>
+                                <div class="ach-status locked">🔒 4/12 получено</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- SECTION: Progress -->
+                    <section id="page-progress" class="page">
+                        <h2>📈 Прогресс по дисциплинам</h2>
+                        <p class="subtitle">Система 100 баллов для каждого предмета</p>
+                        
+                        <div class="progress-stats">
+                            <div class="stat-card">
+                                <div class="stat-label">Общий средний балл</div>
+                                <div class="stat-value">68</div>
+                                <div style="font-size:0.85rem; margin-top:6px; color:var(--text-muted)">из 100 возможных</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Предметов с автоматом</div>
+                                <div class="stat-value">2</div>
+                                <div style="font-size:0.85rem; margin-top:6px; color:var(--text-muted)">из 6 дисциплин</div>
+                            </div>
+                        </div>
+
+                        <h3 style="margin:24px 0 16px;">Прогресс по предметам</h3>
+                        
+                        <div class="progress-item">
+                            <div class="progress-header">
+                                <span class="subject-name">📐 Математика</span>
+                                <span class="subject-points">72 / 100</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width:72%; background:linear-gradient(90deg, #10b981 0%, #34d399 100%)"></div>
+                            </div>
+                            <div style="font-size:0.85rem; color:var(--text-muted); margin-top:6px;">
+                                Посещения: 18/20 • Активность: 24/40 • Контрольные: 30/40
+                            </div>
+                        </div>
+
+                        <div class="progress-item">
+                            <div class="progress-header">
+                                <span class="subject-name">⚛️ Физика</span>
+                                <span class="subject-points">65 / 100</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width:65%; background:linear-gradient(90deg, #3b82f6 0%, #60a5fa 100%)"></div>
+                            </div>
+                            <div style="font-size:0.85rem; color:var(--text-muted); margin-top:6px;">
+                                Посещения: 16/20 • Активность: 20/40 • Контрольные: 29/40
+                            </div>
+                        </div>
+
+                        <div class="progress-item">
+                            <div class="progress-header">
+                                <span class="subject-name">💻 Проектная деятельность</span>
+                                <span class="subject-points">85 / 100</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width:85%; background:linear-gradient(90deg, #8b5cf6 0%, #a78bfa 100%)"></div>
+                            </div>
+                            <div style="font-size:0.85rem; color:var(--text-muted); margin-top:6px;">
+                                Посещения: 20/20 • Активность: 35/40 • Проекты: 30/40
+                            </div>
+                        </div>
+
+                        <div class="progress-item">
+                            <div class="progress-header">
+                                <span class="subject-name">📡 Общая теория связи</span>
+                                <span class="subject-points">58 / 100</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width:58%; background:linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%)"></div>
+                            </div>
+                            <div style="font-size:0.85rem; color:var(--text-muted); margin-top:6px;">
+                                Посещения: 14/20 • Активность: 18/40 • Контрольные: 26/40
+                            </div>
+                        </div>
+
+                        <div class="progress-item">
+                            <div class="progress-header">
+                                <span class="subject-name">📶 Распространение радиоволн</span>
+                                <span class="subject-points">62 / 100</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width:62%; background:linear-gradient(90deg, #ec4899 0%, #f472b6 100%)"></div>
+                            </div>
+                            <div style="font-size:0.85rem; color:var(--text-muted); margin-top:6px;">
+                                Посещения: 15/20 • Активность: 22/40 • Контрольные: 25/40
+                            </div>
+                        </div>
+
+                        <div class="progress-item">
+                            <div class="progress-header">
+                                <span class="subject-name">🌐 СТиСА</span>
+                                <span class="subject-points">55 / 100</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width:55%; background:linear-gradient(90deg, #ef4444 0%, #f87171 100%)"></div>
+                            </div>
+                            <div style="font-size:0.85rem; color:var(--text-muted); margin-top:6px;">
+                                Посещения: 13/20 • Активность: 17/40 • Контрольные: 25/40
+                            </div>
+                        </div>
+
+                        <div style="margin-top:24px; padding:20px; background:linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-radius:12px; border-left:4px solid var(--warning);">
+                            <strong style="color:#92400e; display:block; margin-bottom:8px;">💡 Рекомендация:</strong>
+                            <p style="margin:4px 0; color:#78350f; font-size:0.95rem;">
+                                Для получения автомата по <strong>Общей теории связи</strong> и <strong>СТиСА</strong> необходимо набрать ещё 42 и 45 баллов соответственно. 
+                                Рекомендуется посетить оставшиеся пары и проявить активность на занятиях.
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- SECTION: Settings -->
+                    <section id="page-settings" class="page">
+                        <h2>⚙️ Настройки</h2>
+                        <div class="settings-section">
+                            <div class="toggle-row">
+                                <span>Push-уведомления о начале пары</span>
+                                <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                            </div>
+                            <div class="toggle-row">
+                                <span>Email-отчёт о баллах за неделю</span>
+                                <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+                            </div>
+                            <div class="toggle-row">
+                                <span>Напоминания о дедлайнах</span>
+                                <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                            </div>
+                            <button class="btn btn-danger" style="margin-top:20px;" onclick="logout()">Выйти</button>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- ================= TEACHER CONTENT ================= -->
+                <div id="teacher-content" class="hidden">
+                    <h2>👨‍🏫 Панель преподавателя</h2>
+                    <p class="subtitle">Управление посещаемостью и начисление баллов</p>
+                    
+                    <div class="group-selector">
+                        <button class="group-btn active" onclick="selectGroup('ШМС-111', this)">ШМС-111</button>
+                        <button class="group-btn" onclick="selectGroup('ШМС-211', this)">ШМС-211</button>
+                        <button class="group-btn" onclick="selectGroup('ШМС-311', this)">ШМС-311</button>
+                        <button class="group-btn" onclick="selectGroup('ШМС-411', this)">ШМС-411</button>
+                    </div>
+
+                    <div class="stats-row">
+                        <div class="stat-card-teacher">
+                            <div class="stat-label">Студентов в группе</div>
+                            <div class="stat-value-teacher" id="t-total">30</div>
+                        </div>
+                        <div class="stat-card-teacher">
+                            <div class="stat-label">Присутствует сейчас</div>
+                            <div class="stat-value-teacher" id="t-present" style="color:var(--success)">0%</div>
+                        </div>
+                        <div class="stat-card-teacher">
+                            <div class="stat-label">Средний балл</div>
+                            <div class="stat-value-teacher" id="t-avg">0</div>
+                        </div>
+                    </div>
+
+                    <div style="background:#f8fafc; border-radius:12px; overflow:hidden; border:1px solid var(--border)">
+                        <table class="student-table">
+                            <thead>
+                                <tr><th>Студент</th><th>Статус</th><th>Баллы</th><th>Действие</th></tr>
+                            </thead>
+                            <tbody id="teacherTableBody">
+                                <!-- JS generates rows here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div style="margin-top:20px; display:flex; gap:12px; flex-wrap:wrap">
+                        <button class="btn" onclick="exportReport()">📥 Экспорт отчёта</button>
+                        <button class="btn btn-outline" onclick="refreshList()">🔄 Обновить список</button>
+                    </div>
+                </div>
+
+                <!-- ================= ADMIN CONTENT ================= -->
+                <div id="admin-content" class="hidden">
+                    <h2>👔 Панель администрации</h2>
+                    <p class="subtitle">Сводная аналитика по потоку</p>
+
+                    <div class="progress-stats">
+                        <div class="stat-card">
+                            <div class="stat-label">Всего студентов</div>
+                            <div class="stat-value">120</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Ср. посещаемость</div>
+                            <div class="stat-value" style="color:var(--success)">87%</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Результаты тестов</div>
+                            <div class="stat-value" style="color:var(--warning)">4.6/5</div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin:32px 0 16px">Рейтинг групп по посещаемости</h3>
+                    <div id="adminRankings">
+                        <!-- JS generates rankings here -->
+                    </div>
+                    
+                    <div style="margin-top:24px; padding:20px; background:#f0f9ff; border-radius:12px; border:1px solid #bae6fd">
+                        <strong style="color:var(--primary); display:block; margin-bottom:8px">📊 Быстрая аналитика:</strong>
+                        <p style="margin:4px 0; color:var(--text-muted); font-size:0.95rem">
+                            • Группа <strong>ШМС-211</strong> показывает лучший рост посещаемости (+24% за месяц)<br>
+                            • По предмету <strong>СТиСА</strong> требуется дополнительное внимание (средний балл 55/100)<br>
+                            • 94% студентов отметили систему как «удобную» в опросе
+                        </p>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // === MOCK DATA GENERATION ===
+        const surnames = ["Иванов", "Петров", "Сидоров", "Кузнецов", "Смирнов", "Попов", "Васильев", "Соколов", "Михайлов", "Новиков", "Федоров", "Морозов", "Волков", "Алексеев", "Лебедев", "Семенов", "Егоров", "Павлов", "Козлов", "Степанов"];
+        const names = ["Алексей", "Дмитрий", "Сергей", "Анна", "Мария", "Елена", "Иван", "Павел", "Ольга", "Наталья", "Андрей", "Максим", "Виктор", "Юлия", "Татьяна", "Александр", "Екатерина", "Владимир", "Светлана", "Артём"];
+
+        function generateStudents(groupName) {
+            let students = [];
+            for(let i=1; i<=30; i++) {
+                const s = surnames[Math.floor(Math.random() * surnames.length)];
+                const n = names[Math.floor(Math.random() * names.length)];
+                const present = Math.random() > 0.2; // 80% chance present
+                students.push({
+                    id: i,
+                    name: `${s} ${n.charAt(0)}.`,
+                    present: present,
+                    points: Math.floor(Math.random() * 40) + 20 // Random points 20-60
+                });
+            }
+            return students;
+        }
+
+        // === STATE ===
+        let currentGroup = 'ШМС-111';
+        let groupData = {
+            'ШМС-111': generateStudents('ШМС-111'),
+            'ШМС-211': generateStudents('ШМС-211'),
+            'ШМС-311': generateStudents('ШМС-311'),
+            'ШМС-411': generateStudents('ШМС-411')
+        };
+
+        // === AUTH FUNCTIONS ===
+        function switchTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (tab === 'login') {
+                document.getElementById('loginForm').classList.remove('hidden');
+                document.getElementById('registerForm').classList.add('hidden');
+            } else {
+                document.getElementById('loginForm').classList.add('hidden');
+                document.getElementById('registerForm').classList.remove('hidden');
+            }
+        }
+
+        function login() {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('dashboardPage').classList.remove('hidden');
+            document.body.style.background = '#f8fafc';
+            switchRole('student');
+            renderTeacherTable();
+            renderAdminRankings();
+        }
+
+        function register() {
+            alert('Регистрация успешна! Теперь войдите в систему.');
+            switchTab('login');
+        }
+
+        function logout() {
+            document.getElementById('dashboardPage').classList.add('hidden');
+            document.getElementById('loginPage').classList.remove('hidden');
+            document.body.style.background = 'var(--gradient)';
+            resetFlow();
+        }
+
+        // === ROLE SWITCHING ===
+        function switchRole(role) {
+            // Update buttons
+            document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`btn-${role}`).classList.add('active');
+
+            // Show/hide sidebar
+            const sidebar = document.getElementById('sidebar');
+            if (role === 'student') {
+                sidebar.style.display = 'block';
+            } else {
+                sidebar.style.display = 'none';
+            }
+
+            // Show/hide content sections
+            document.getElementById('student-content').classList.toggle('hidden', role !== 'student');
+            document.getElementById('teacher-content').classList.toggle('hidden', role !== 'teacher');
+            document.getElementById('admin-content').classList.toggle('hidden', role !== 'admin');
+
+            // Update user info
+            const uName = document.getElementById('userName');
+            const uLabel = document.getElementById('userRoleLabel');
+            const uAvatar = document.getElementById('userAvatar');
+
+            if (role === 'student') {
+                uName.innerText = "Степан Шаронов";
+                uLabel.innerText = "Группа: ШМС-211";
+                uAvatar.innerText = "СШ";
+            } else if (role === 'teacher') {
+                uName.innerText = "Волков А.С.";
+                uLabel.innerText = "Преподаватель";
+                uAvatar.innerText = "АВ";
+            } else {
+                uName.innerText = "Деканат";
+                uLabel.innerText = "Администрация";
+                uAvatar.innerText = "АД";
+            }
+        }
+
+        function showSection(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            
+            document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+            const link = document.querySelector(`.sidebar a[href="#${pageId}"]`);
+            if (link) link.classList.add('active');
+        }
+
+        // === ATTENDANCE FLOW (Student) ===
+        let isOnCampus = false;
+        const logEl = document.getElementById('consoleLog');
+        
+        function addLog(msg) {
+            const time = new Date().toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+            logEl.innerHTML += `<div class="log-entry"><span class="log-time">[${time}]</span> ${msg}</div>`;
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function simulateTurnstile() {
+            if (isOnCampus) return;
+            isOnCampus = true;
+            addLog('СКУД: Зафиксирован проход по пропуску');
+            
+            document.getElementById('badge1').className = 'badge badge-success';
+            document.getElementById('badge1').textContent = 'Пройден';
+            document.getElementById('step1').classList.remove('active');
+            document.getElementById('step1').classList.add('completed');
+            document.getElementById('step2').classList.add('active');
+            document.getElementById('scanBtn').disabled = false;
+            
+            addLog('Доступ к QR-коду разблокирован');
+        }
+
+        function showQR() {
+            document.getElementById('qrSection').classList.remove('hidden');
+            addLog('QR-код сгенерирован. Ауд. 305, Пара 2');
+        }
+
+        function confirmQR() {
+            addLog('QR отсканирован. Начисление баллов...');
+            
+            setTimeout(() => {
+                document.getElementById('step2').classList.remove('active');
+                document.getElementById('step2').classList.add('completed');
+                document.getElementById('step2').querySelector('.btn').textContent = 'Отсканировано';
+                document.getElementById('step2').querySelector('.btn').disabled = true;
+                
+                document.getElementById('step3').classList.add('active', 'completed');
+                document.getElementById('badge3').style.display = 'inline-block';
+                document.getElementById('badge3').className = 'badge badge-success';
+                document.getElementById('badge3').textContent = 'Подтверждено';
+                
+                document.getElementById('qrSection').classList.add('hidden');
+                document.getElementById('successBanner').style.display = 'block';
+                
+                addLog('✅ +2 балла начислено! Прогресс: 42/50');
+            }, 800);
+        }
+
+        function resetFlow() {
+            isOnCampus = false;
+            document.getElementById('attendanceFlow').innerHTML = `
+                <div class="step active" id="step1">
+                    <div class="step-icon">🚪</div>
+                    <div class="step-content">
+                        <h3>1. Фиксация входа в университет</h3>
+                        <p>СКУД (турникеты) автоматически передают статус "на территории"</p>
+                    </div>
+                    <span class="badge badge-waiting" id="badge1">Ожидание</span>
+                </div>
+                <div class="step" id="step2">
+                    <div class="step-icon">📱</div>
+                    <div class="step-content">
+                        <h3>2. Сканирование QR-кода у аудитории</h3>
+                        <p>Доступно только при статусе "на территории"</p>
+                    </div>
+                    <button class="btn" id="scanBtn" disabled onclick="showQR()">Сканировать QR</button>
+                </div>
+                <div class="step" id="step3">
+                    <div class="step-icon">✅</div>
+                    <div class="step-content">
+                        <h3>3. Подтверждение присутствия</h3>
+                        <p>Баллы начислены, данные отправлены преподавателю</p>
+                    </div>
+                    <span class="badge badge-waiting" id="badge3" style="display:none">Готово</span>
+                </div>
+            `;
+            document.getElementById('qrSection').classList.add('hidden');
+            document.getElementById('successBanner').style.display = 'none';
+            logEl.innerHTML = `<div class="log-entry"><span class="log-time">[${new Date().toLocaleTimeString('ru-RU')}]</span> Система сброшена.</div>`;
+            addLog('Ожидание входа...');
+        }
+
+        // === TEACHER FUNCTIONS ===
+        function selectGroup(group, btn) {
+            currentGroup = group;
+            document.querySelectorAll('.group-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderTeacherTable();
+        }
+
+        function renderTeacherTable() {
+            const tbody = document.getElementById('teacherTableBody');
+            tbody.innerHTML = '';
+            let presentCount = 0;
+            let totalPoints = 0;
+
+            groupData[currentGroup].forEach(student => {
+                if(student.present) presentCount++;
+                totalPoints += student.points;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="font-weight:500">${student.name}</td>
+                    <td><span class="status-dot ${student.present ? 'status-present' : 'status-absent'}"></span>${student.present ? 'На паре' : 'Отсутствует'}</td>
+                    <td><strong style="color:var(--primary)">${student.points}</strong></td>
+                    <td>
+                        ${!student.present ? 
+                            `<button class="btn-small btn-present" onclick="markPresent(${student.id})">Отметить</button>` : 
+                            `<button class="btn-small btn-activity" onclick="addActivityPoint(${student.id})">+Активность</button>`
+                        }
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Update stats
+            const percent = Math.round((presentCount / groupData[currentGroup].length) * 100);
+            const avg = Math.round(totalPoints / groupData[currentGroup].length);
+            
+            document.getElementById('t-total').innerText = groupData[currentGroup].length;
+            document.getElementById('t-present').innerText = percent + "%";
+            document.getElementById('t-avg').innerText = avg;
+        }
+
+        function markPresent(id) {
+            const student = groupData[currentGroup].find(s => s.id === id);
+            if (student && !student.present) {
+                student.present = true;
+                student.points += 2;
+                renderTeacherTable();
+                addLog(`✓ ${student.name} отмечен как присутствующий (+2 балла)`);
+            }
+        }
+
+        function addActivityPoint(id) {
+            const student = groupData[currentGroup].find(s => s.id === id);
+            if (student) {
+                student.points += 3;
+                renderTeacherTable();
+                addLog(`🎯 ${student.name} получил +3 балла за активность`);
+                // Show small visual feedback
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✓ +3';
+                btn.style.background = '#d1fae5';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 1000);
+            }
+        }
+
+        function exportReport() {
+            alert(`📥 Отчёт по группе ${currentGroup} экспортирован в Excel\n\nСодержит:\n• Список студентов\n• Статус присутствия\n• Накопленные баллы\n• Дата: ${new Date().toLocaleDateString('ru-RU')}`);
+            addLog('📤 Отчёт экспортирован');
+        }
+
+        function refreshList() {
+            renderTeacherTable();
+            addLog('🔄 Список обновлён');
+        }
+
+        // === ADMIN FUNCTIONS ===
+        function renderAdminRankings() {
+            const container = document.getElementById('adminRankings');
+            container.innerHTML = '';
+            
+            // Calculate stats for all groups
+            let groupsStats = [];
+            for(let g in groupData) {
+                let total = groupData[g].length;
+                let present = groupData[g].filter(s => s.present).length;
+                let avgPoints = Math.round(groupData[g].reduce((sum, s) => sum + s.points, 0) / total);
+                groupsStats.push({ 
+                    name: g, 
+                    percent: Math.round((present/total)*100),
+                    avg: avgPoints
+                });
+            }
+            // Sort by attendance percent
+            groupsStats.sort((a,b) => b.percent - a.percent);
+
+            groupsStats.forEach((g, index) => {
+                const div = document.createElement('div');
+                div.className = 'admin-rank-item';
+                div.innerHTML = `
+                    <div class="rank-number">${index + 1}</div>
+                    <div style="font-weight:600; width:90px">${g.name}</div>
+                    <div class="rank-bar-container">
+                        <div class="rank-bar" style="width:${g.percent}%"></div>
+                    </div>
+                    <div class="rank-percent">${g.percent}%</div>
+                    <div style="margin-left:16px; color:var(--text-muted); font-size:0.9rem">
+                        ср. балл: <strong style="color:var(--primary)">${g.avg}</strong>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+    </script>
+</body>
+</html>
